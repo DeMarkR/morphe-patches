@@ -266,6 +266,7 @@ internal object PivotBarRendererListFingerprint : Fingerprint(
  * The tab protos are converted to tab items, that are cached in a field of the class.
  */
 internal object BrowseResponseTabsFingerprint : Fingerprint(
+    interfaces = listOf("Landroid/os/Parcelable;"),
     accessFlags = listOf(AccessFlags.PUBLIC, AccessFlags.FINAL, AccessFlags.DECLARED_SYNCHRONIZED),
     returnType = "L",
     parameters = listOf(),
@@ -276,10 +277,7 @@ internal object BrowseResponseTabsFingerprint : Fingerprint(
             opcode = Opcode.IPUT_OBJECT,
             definingClass = "this"
         )
-    ),
-    custom = { _, classDef ->
-        classDef.interfaces.contains("Landroid/os/Parcelable;")
-    }
+    )
 )
 
 /**
