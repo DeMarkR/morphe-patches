@@ -41,7 +41,7 @@ import app.morphe.patches.util.resource.editText
 import app.morphe.patches.util.resource.transformStringResources
 import app.morphe.util.asSequence
 import app.morphe.util.findElementByAttributeValue
-import app.morphe.util.findInstructionIndicesReversedOrThrow
+import app.morphe.util.matchAllMethodIndicesForEach
 import com.android.tools.smali.dexlib2.Opcode
 import com.android.tools.smali.dexlib2.iface.instruction.OneRegisterInstruction
 import org.w3c.dom.Element
@@ -84,27 +84,23 @@ private fun applyGetPackageName(oldPackageName: String, classToChange: String) {
     Fingerprint(
         definingClass = classToChange,
         filters = listOf(filter)
-    ).matchAllOrNull()?.forEach { match ->
-        match.method.apply {
-            findInstructionIndicesReversedOrThrow(filter).forEach { index ->
-                val moveResultIndex = index + 1
+    ).matchAllMethodIndicesForEach { index ->
+        val moveResultIndex = index + 1
 
-                // Ignore calls to getPackageName() that do not use the return value.
-                val returnInstruction = getInstruction(moveResultIndex)
-                if (returnInstruction.opcode != Opcode.MOVE_RESULT_OBJECT) {
-                    return@forEach
-                }
-
-                val register = (returnInstruction as OneRegisterInstruction).registerA
-                replaceInstruction(
-                    moveResultIndex,
-                    """
-                        # Replace return-object with constant string
-                        const-string v$register, "$oldPackageName"
-                    """
-                )
-            }
+        // Ignore calls to getPackageName() that do not use the return value.
+        val returnInstruction = getInstruction(moveResultIndex)
+        if (returnInstruction.opcode != Opcode.MOVE_RESULT_OBJECT) {
+            return@matchAllMethodIndicesForEach
         }
+
+        val register = (returnInstruction as OneRegisterInstruction).registerA
+        replaceInstruction(
+            moveResultIndex,
+            """
+                # Replace return-object with constant string
+                const-string v$register, "$oldPackageName"
+            """
+        )
     }
 }
 
