@@ -22,6 +22,8 @@ import app.morphe.patcher.resource.resourceId
 import app.morphe.patcher.util.proxy.mutableTypes.MutableClass
 import app.morphe.patches.shared.misc.settings.preference.ListPreference
 import app.morphe.patches.youtube.misc.extension.sharedExtensionPatch
+import app.morphe.patches.youtube.misc.playservice.is_20_49_or_greater
+import app.morphe.patches.youtube.misc.playservice.versionCheckPatch
 import app.morphe.patches.youtube.misc.settings.PreferenceScreen
 import app.morphe.patches.youtube.misc.settings.settingsPatch
 import app.morphe.patches.youtube.shared.Constants.COMPATIBILITY_YOUTUBE
@@ -326,6 +328,16 @@ private fun ResourcePatchContext.wrapAppSelectorIcons(selectorPaths: List<String
     }
 }
 
+// Layouts with the player settings button. Decoding every layout to find them is slow.
+// Newer targets have only some of them.
+private val playerOverflowButtonLayouts = listOf(
+    "youtube_controls_layout",
+    "youtube_controls_overlay_subtitle_button",
+    "youtube_cf_minimal_impact_controls_layout",
+    "youtube_cf_navigation_improvement_controls_layout",
+    "youtube_portrait_fullscreen_only_controls_layout",
+)
+
 private const val EXTENSION_PLAY_PAUSE_ICONS =
     "Lapp/morphe/extension/youtube/videoplayer/PlayPauseIcons;"
 
@@ -415,17 +427,19 @@ private fun MutableClass.hookIconsSetFromCode() {
  * Applies the style to the app's player buttons that get their icons from code.
  */
 private val playerButtonIconStylePatch = bytecodePatch {
-    dependsOn(sharedExtensionPatch)
+    dependsOn(sharedExtensionPatch, versionCheckPatch)
 
     execute {
         // The same icons are on screens outside the player, so only these classes are changed.
-        // Any can be missing on a target, which then keeps the app icons of that button.
-        PlayerOverlayControlsFingerprint.classDefOrNull?.hookIconsSetFromCode()
-        PlayerControlIconLoaderFingerprint.classDefOrNull?.hookIconsSetFromCode()
-        PlayerCaptionsButtonFingerprint.classDefOrNull?.hookIconsSetFromCode()
-        mutableClassDefByOrNull(MDX_ENTRY_POINT_BUTTON_CLASS)?.hookIconsSetFromCode()
+        PlayerOverlayControlsFingerprint.classDef.hookIconsSetFromCode()
+        // Older targets do not have this loader.
+        if (is_20_49_or_greater) {
+            PlayerControlIconLoaderFingerprint.classDef.hookIconsSetFromCode()
+        }
+        PlayerCaptionsButtonFingerprint.classDef.hookIconsSetFromCode()
+        mutableClassDefBy(MDX_ENTRY_POINT_BUTTON_CLASS).hookIconsSetFromCode()
 
-        PlayPauseButtonStateFingerprint.methodOrNull?.apply {
+        PlayPauseButtonStateFingerprint.method.apply {
             val play = resourceId(ResourceType.STRING, "accessibility_play")
             val pause = resourceId(ResourceType.STRING, "accessibility_pause")
             val replay = resourceId(ResourceType.STRING, "accessibility_replay")
@@ -559,8 +573,7 @@ val playerIconStylePatch = resourcePatch(
         // Without the bold player the settings button keeps the gear of its layout, which other screens share,
         // so only the button points to a wrapper. The wrapper keeps whatever icon the layout had.
         var settingsIcon: String? = null
-        decode("res/layout*/*")
-            .filter { path -> get(path, false).readText().contains("\"@id/player_overflow_button\"") }
+        decode(*playerOverflowButtonLayouts.map { "res/layout*/$it.xml" }.toTypedArray())
             .forEach { path ->
                 document(path).use { document ->
                     val elements = document.getElementsByTagName("*")
