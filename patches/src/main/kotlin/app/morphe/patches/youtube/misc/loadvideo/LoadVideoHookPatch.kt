@@ -178,7 +178,9 @@ internal val loadVideoHookPatch = bytecodePatch(
             )
         }
 
-        BackButtonFinishActivityOnNewVideoIntentFingerprint.method.addInstruction(
+        BackButtonFinishActivityOnNewVideoIntentFingerprint(
+            AppWatchDescriptorToStringFingerprint.originalClassDef.type
+        ).method.addInstruction(
             0,
             "return-void"
         )
