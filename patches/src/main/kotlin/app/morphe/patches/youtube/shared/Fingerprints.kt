@@ -122,20 +122,18 @@ internal object RelateVideoOverlayLayoutParamFingerprint : Fingerprint(
 internal object PlayerTypeEnumFingerprint : Fingerprint(
     accessFlags = listOf(AccessFlags.STATIC, AccessFlags.CONSTRUCTOR),
     filters = listOf(
-        opcode(Opcode.APUT_OBJECT)
-    ),
-    strings = listOf(
-        "WATCH_WHILE_PICTURE_IN_PICTURE",
-        "NONE",
-        "HIDDEN",
-        "WATCH_WHILE_MINIMIZED",
-        "WATCH_WHILE_MAXIMIZED",
-        "WATCH_WHILE_FULLSCREEN",
-        "WATCH_WHILE_SLIDING_MAXIMIZED_FULLSCREEN",
-        "WATCH_WHILE_SLIDING_MINIMIZED_MAXIMIZED",
-        "WATCH_WHILE_SLIDING_MINIMIZED_DISMISSED",
-        "INLINE_MINIMAL",
-        "VIRTUAL_REALITY_FULLSCREEN",
+        string("NONE"),
+        string("HIDDEN"),
+        string("WATCH_WHILE_MINIMIZED"),
+        string("WATCH_WHILE_MAXIMIZED"),
+        string("WATCH_WHILE_FULLSCREEN"),
+        string("WATCH_WHILE_SLIDING_MAXIMIZED_FULLSCREEN"),
+        string("WATCH_WHILE_SLIDING_MINIMIZED_MAXIMIZED"),
+        string("WATCH_WHILE_SLIDING_MINIMIZED_DISMISSED"),
+        string("INLINE_MINIMAL"),
+        string("VIRTUAL_REALITY_FULLSCREEN"),
+        string("WATCH_WHILE_PICTURE_IN_PICTURE"),
+        opcode(Opcode.APUT_OBJECT),
     )
 )
 
