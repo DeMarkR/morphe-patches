@@ -109,7 +109,8 @@ fun gmsCoreSupportPatch(
     )
 
     execute {
-        val enableCast by enableCastOption
+        // The option value is nullable.
+        val enableCast = enableCastOption.value == true
 
         GooglePlayUtilityFingerprint.method.returnEarly(0)
 
