@@ -68,6 +68,7 @@ internal const val GMS_CORE_VENDOR_GROUP_ID = "app.revanced"
  * @param mainActivityOnCreateFingerprint The fingerprint of the main activity onCreate method.
  * @param extensionPatch The patch responsible for the extension.
  * @param executeBlock The additional execution block of the patch.
+ * @param castExecuteBlock App specific fixes for casting, run only with the "Enable Google Cast" option.
  * @param block The additional block to build the patch.
  */
 fun gmsCoreSupportPatch(
@@ -80,6 +81,7 @@ fun gmsCoreSupportPatch(
     extensionPatch: Patch<*>,
     gmsCoreSupportResourcePatchFactory: () -> Patch<*>,
     executeBlock: BytecodePatchContext.() -> Unit = {},
+    castExecuteBlock: BytecodePatchContext.() -> Unit = {},
     block: BytecodePatchBuilder.() -> Unit = {},
 ) = bytecodePatch(
     name = "GmsCore support",
@@ -105,7 +107,8 @@ fun gmsCoreSupportPatch(
         default = false,
         title = "Enable Google Cast",
         description = "Keeps the Google Cast SDK active so the app can cast through GmsCore. " +
-                "Requires a GmsCore build with Google Cast support, otherwise casting does nothing.",
+                "Requires a GmsCore build with Google Cast support. Without it casting does not work, " +
+                "and the app may crash when it sets up casting.",
     )
 
     execute {
@@ -240,6 +243,7 @@ fun gmsCoreSupportPatch(
         }
 
         executeBlock()
+        if (enableCast) castExecuteBlock()
     }
 
     block()
