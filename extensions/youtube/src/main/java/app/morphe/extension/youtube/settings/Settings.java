@@ -340,6 +340,10 @@ public class Settings extends SharedYouTubeSettings {
     public static final BooleanSetting VIDEO_QUALITY_DIALOG_BUTTON = new BooleanSetting("morphe_video_quality_dialog_button", FALSE, true);
     public static final BooleanSetting VIDEO_QUALITY_DIALOG_BUTTON_RESOLUTION = new BooleanSetting("morphe_video_quality_dialog_button_resolution", FALSE, parent(VIDEO_QUALITY_DIALOG_BUTTON));
 
+    // Feed view count
+    public static final BooleanSetting FEED_VIEW_COUNT = new BooleanSetting("morphe_feed_view_count", FALSE, true);
+    public static final StringSetting FEED_VIEW_COUNT_PATHS = new StringSetting("morphe_feed_view_count_paths", "", false, false);
+
     // Return YouTube Dislike, feed videos
     public static final BooleanSetting RYD_FEED_LIKE_COUNT = new BooleanSetting("morphe_ryd_feed_like_count", FALSE, true, parent(RYD_ENABLED));
     public static final BooleanSetting RYD_FEED_LIKE_RATIO = new BooleanSetting("morphe_ryd_feed_like_ratio", FALSE, true, parent(RYD_ENABLED));
@@ -401,6 +405,7 @@ public class Settings extends SharedYouTubeSettings {
     public static final BooleanSetting HIDE_COMMENTS_GIFT_BUTTON = new BooleanSetting("morphe_hide_comments_gift_button", TRUE, true);
     public static final BooleanSetting HIDE_COMMENTS_INFO_BUTTON = new BooleanSetting("morphe_hide_comments_info_button", FALSE, true);
     public static final BooleanSetting HIDE_COMMENTS_LIVE_CHAT_DONATORS_BAR = new BooleanSetting("morphe_hide_comments_live_chat_donators_bar", FALSE, true);
+    public static final BooleanSetting HIDE_COMMENTS_LIVE_CHAT_SCROLL_TO_BOTTOM_BUTTON = new BooleanSetting("morphe_hide_comments_live_chat_scroll_to_bottom_button", FALSE, true);
     public static final BooleanSetting HIDE_COMMENTS_LIVE_CHAT_TOOLTIPS = new BooleanSetting("morphe_hide_comments_live_chat_tooltips", FALSE, true);
     public static final BooleanSetting HIDE_COMMENTS_MENU_BUTTON = new BooleanSetting("morphe_hide_comments_menu_button", FALSE);
     public static final BooleanSetting HIDE_COMMENTS_PREVIEW_COMMENT = new BooleanSetting("morphe_hide_comments_preview_comment", FALSE);
