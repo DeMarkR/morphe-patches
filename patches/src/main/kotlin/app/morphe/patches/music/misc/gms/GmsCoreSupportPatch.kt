@@ -24,6 +24,11 @@ val gmsCoreSupportPatch = gmsCoreSupportPatch(
     mainActivityOnCreateFingerprint = MusicActivityOnCreateFingerprint,
     extensionPatch = sharedExtensionPatch,
     gmsCoreSupportResourcePatchFactory = ::gmsCoreSupportResourcePatch,
+    castExecuteBlock = {
+        hidePlayServicesCastRoutes()
+        sendQueueMovesToReceiver()
+        skipQueueRestorationWhileCasting()
+    },
 ) {
     dependsOn(spoofVideoStreamsPatch)
 
