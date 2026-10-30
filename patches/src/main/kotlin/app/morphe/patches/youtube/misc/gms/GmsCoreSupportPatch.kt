@@ -13,7 +13,6 @@ package app.morphe.patches.youtube.misc.gms
 import app.morphe.patches.shared.PrimeMethodFingerprint
 import app.morphe.patches.shared.misc.gms.gmsCoreSupportPatch
 import app.morphe.patches.shared.misc.gms.gmsCoreSupportResourcePatch
-import app.morphe.patches.youtube.layout.buttons.overlay.hidePlayerOverlayButtonsPatch
 import app.morphe.patches.youtube.misc.extension.sharedExtensionPatch
 import app.morphe.patches.youtube.misc.gms.Constants.MORPHE_YOUTUBE_PACKAGE_NAME
 import app.morphe.patches.youtube.misc.gms.Constants.YOUTUBE_PACKAGE_NAME
@@ -34,7 +33,6 @@ val gmsCoreSupportPatch = gmsCoreSupportPatch(
 ) {
     dependsOn(
         sharedExtensionPatch,
-        hidePlayerOverlayButtonsPatch, // Cast only works with a GmsCore that supports it.
         spoofVideoStreamsPatch,
         deviceComplianceCheckPatch
     )
