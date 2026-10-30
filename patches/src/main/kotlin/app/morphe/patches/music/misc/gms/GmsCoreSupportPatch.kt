@@ -4,6 +4,7 @@ import app.morphe.patches.music.misc.extension.sharedExtensionPatch
 import app.morphe.patches.music.misc.fileprovider.fileProviderPatch
 import app.morphe.patches.music.misc.gms.Constants.MORPHE_MUSIC_PACKAGE_NAME
 import app.morphe.patches.music.misc.gms.Constants.MUSIC_PACKAGE_NAME
+import app.morphe.patches.music.misc.playservice.versionCheckPatch
 import app.morphe.patches.music.misc.settings.PreferenceScreen
 import app.morphe.patches.music.misc.settings.settingsPatch
 import app.morphe.patches.music.misc.spoof.spoofVideoStreamsPatch
@@ -30,7 +31,10 @@ val gmsCoreSupportPatch = gmsCoreSupportPatch(
         skipQueueRestorationWhileCasting()
     },
 ) {
-    dependsOn(spoofVideoStreamsPatch)
+    dependsOn(
+        spoofVideoStreamsPatch,
+        versionCheckPatch,
+    )
 
     compatibleWith(COMPATIBILITY_YOUTUBE_MUSIC)
 }
