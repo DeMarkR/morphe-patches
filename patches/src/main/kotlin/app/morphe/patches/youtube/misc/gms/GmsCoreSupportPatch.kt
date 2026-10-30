@@ -10,7 +10,6 @@
 
 package app.morphe.patches.youtube.misc.gms
 
-import app.morphe.patches.shared.CastContextFetchFingerprint
 import app.morphe.patches.shared.PrimeMethodFingerprint
 import app.morphe.patches.shared.misc.gms.gmsCoreSupportPatch
 import app.morphe.patches.shared.misc.gms.gmsCoreSupportResourcePatch
@@ -29,16 +28,13 @@ val gmsCoreSupportPatch = gmsCoreSupportPatch(
     fromPackageName = YOUTUBE_PACKAGE_NAME,
     toPackageNameDefault = MORPHE_YOUTUBE_PACKAGE_NAME,
     primeMethodFingerprint = PrimeMethodFingerprint,
-    castFingerprints = setOf(
-        CastContextFetchFingerprint,
-    ),
     mainActivityOnCreateFingerprint = YouTubeActivityOnCreateFingerprint,
     extensionPatch = sharedExtensionPatch,
     gmsCoreSupportResourcePatchFactory = ::gmsCoreSupportResourcePatch
 ) {
     dependsOn(
         sharedExtensionPatch,
-        hidePlayerOverlayButtonsPatch, // Hide non-functional cast button.
+        hidePlayerOverlayButtonsPatch, // Cast only works with a GmsCore that supports it.
         spoofVideoStreamsPatch,
         deviceComplianceCheckPatch
     )

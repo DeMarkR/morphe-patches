@@ -22,7 +22,6 @@ import app.morphe.patcher.patch.Patch
 import app.morphe.patcher.patch.PatchAvailability
 import app.morphe.patcher.patch.ResourcePatchBuilder
 import app.morphe.patcher.patch.ResourcePatchContext
-import app.morphe.patcher.patch.booleanOption
 import app.morphe.patcher.patch.bytecodePatch
 import app.morphe.patcher.patch.resourcePatch
 import app.morphe.patcher.string
@@ -63,12 +62,9 @@ internal const val GMS_CORE_VENDOR_GROUP_ID = "app.revanced"
  * @param toPackageNameDefault The package name to fall back to if no custom package name is specified in patch options.
  * @param primeMethodFingerprint The fingerprint of the "prime" method that needs to be patched.
  * @param earlyReturnFingerprints The fingerprints of methods that need to be returned early.
- * @param castFingerprints The fingerprints of Cast SDK methods that are returned early unless
- * the "Enable Google Cast" option is set. GmsCore builds without Cast support crash without this.
  * @param mainActivityOnCreateFingerprint The fingerprint of the main activity onCreate method.
  * @param extensionPatch The patch responsible for the extension.
  * @param executeBlock The additional execution block of the patch.
- * @param castExecuteBlock App specific fixes for casting, run only with the "Enable Google Cast" option.
  * @param block The additional block to build the patch.
  */
 fun gmsCoreSupportPatch(
@@ -76,12 +72,10 @@ fun gmsCoreSupportPatch(
     toPackageNameDefault: String,
     primeMethodFingerprint: Fingerprint? = null,
     earlyReturnFingerprints: Set<Fingerprint> = setOf(),
-    castFingerprints: Set<Fingerprint> = setOf(),
     mainActivityOnCreateFingerprint: Fingerprint,
     extensionPatch: Patch<*>,
     gmsCoreSupportResourcePatchFactory: () -> Patch<*>,
     executeBlock: BytecodePatchContext.() -> Unit = {},
-    castExecuteBlock: BytecodePatchContext.() -> Unit = {},
     block: BytecodePatchBuilder.() -> Unit = {},
 ) = bytecodePatch(
     name = "GmsCore support",
@@ -102,19 +96,7 @@ fun gmsCoreSupportPatch(
         extensionPatch,
     )
 
-    val enableCastOption = booleanOption(
-        key = "enableCast",
-        default = false,
-        title = "Enable Google Cast",
-        description = "Keeps the Google Cast SDK active so the app can cast through GmsCore. " +
-                "Requires a GmsCore build with Google Cast support. Without it casting does not work, " +
-                "and the app may crash when it sets up casting.",
-    )
-
     execute {
-        // The option value is nullable.
-        val enableCast = enableCastOption.value == true
-
         GooglePlayUtilityFingerprint.method.returnEarly(0)
 
         val toPackageName = setOrGetFallbackPackageName(toPackageNameDefault)
@@ -202,8 +184,7 @@ fun gmsCoreSupportPatch(
         primeMethodFingerprint?.let { transformPrimeMethod(toPackageName) }
 
         // Return these methods early to prevent the app from crashing.
-        val fingerprintsToReturnEarly = if (enableCast) earlyReturnFingerprints else earlyReturnFingerprints + castFingerprints
-        fingerprintsToReturnEarly.forEach {
+        earlyReturnFingerprints.forEach {
             it.method.apply {
                 if (returnType == "Z") {
                     returnEarly(false)
@@ -243,7 +224,6 @@ fun gmsCoreSupportPatch(
         }
 
         executeBlock()
-        if (enableCast) castExecuteBlock()
     }
 
     block()

@@ -16,7 +16,7 @@ import app.morphe.patches.music.misc.playservice.is_9_30_or_greater
 import app.morphe.util.insertLiteralOverride
 import com.android.tools.smali.dexlib2.iface.instruction.OneRegisterInstruction
 
-// Fixes for casting through a GmsCore with Cast support, applied with the "Enable Google Cast" option.
+// Fixes for casting through a GmsCore with Cast support.
 
 private const val EXTENSION_CLASS = "Lapp/morphe/extension/music/patches/CastFixesPatch;"
 
